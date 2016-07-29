@@ -21,4 +21,13 @@
  *
  */
 
-exports.getVersion = require('./get-version');
+const assert = require('assert');
+const { version } = require('../../package.json');
+const getVersion = require('.');
+
+describe('reading the software version', function () {
+  it('should match the npm package configuration', function () {
+    return getVersion()
+      .then(v => assert.equal(v, version));
+  });
+});

@@ -21,4 +21,8 @@
  *
  */
 
-exports.getVersion = require('./get-version');
+const { version } = require('../../package.json');
+
+module.exports = function () {
+  return Promise.resolve(version);
+};
