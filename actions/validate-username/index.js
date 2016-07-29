@@ -22,6 +22,7 @@
  */
 
 const USERNAME_MIN_LENGTH = 1;
+const USERNAME_MAX_LENGTH = 25;
 
 class UsernameUndefinedError extends Error {
   constructor() {
@@ -79,9 +80,29 @@ function expectMinimumLength(username) {
   return username;
 }
 
+class UsernameMaximumLengthError extends Error {
+  constructor(username) {
+    super();
+
+    this.name = 'UsernameMaximumLengthError';
+    this.message = 'The specified username is too long';
+    this.status = 400;
+    this.username = username;
+  }
+}
+
+function expectMaximumLength(username) {
+  if (username.length > USERNAME_MAX_LENGTH) {
+    throw new UsernameMaximumLengthError(username);
+  }
+
+  return username;
+}
+
 module.exports = function (username) {
   return Promise.resolve(username)
     .then(expectDefined)
     .then(expectString)
-    .then(expectMinimumLength);
+    .then(expectMinimumLength)
+    .then(expectMaximumLength);
 };

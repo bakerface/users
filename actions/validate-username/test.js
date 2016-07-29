@@ -55,4 +55,15 @@ describe('validating a username', function () {
       username: ''
     });
   });
+
+  it('should reject usernames that are too long', function () {
+    const username = '123456789012345678901234567890';
+
+    return validateUsername(username).should.be.rejectedWith({
+      name: 'UsernameMaximumLengthError',
+      message: 'The specified username is too long',
+      status: 400,
+      username: username
+    });
+  });
 });
