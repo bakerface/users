@@ -39,7 +39,27 @@ function expectDefined(username) {
   return username;
 }
 
+class UsernameTypeError extends Error {
+  constructor(username) {
+    super();
+
+    this.name = 'UsernameTypeError';
+    this.message = 'The specified username is not a string';
+    this.status = 400;
+    this.username = username;
+  }
+}
+
+function expectString(username) {
+  if (typeof username !== 'string') {
+    throw new UsernameTypeError(username);
+  }
+
+  return username;
+}
+
 module.exports = function (username) {
   return Promise.resolve(username)
-    .then(expectDefined);
+    .then(expectDefined)
+    .then(expectString);
 };

@@ -26,15 +26,24 @@ require('should');
 const validateUsername = require('.');
 
 describe('validating a username', function () {
-  it('should return valid usernames', function () {
+  it('should return usernames that are valid', function () {
     return validateUsername('jdoe').should.be.fulfilledWith('jdoe');
   });
 
-  it('should reject undefined usernames', function () {
+  it('should reject usernames that are undefined', function () {
     return validateUsername().should.be.rejectedWith({
       name: 'UsernameUndefinedError',
       message: 'A username must be defined',
       status: 400
+    });
+  });
+
+  it('should reject usernames that are not strings', function () {
+    return validateUsername(0).should.be.rejectedWith({
+      name: 'UsernameTypeError',
+      message: 'The specified username is not a string',
+      status: 400,
+      username: 0
     });
   });
 });
