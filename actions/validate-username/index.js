@@ -21,6 +21,8 @@
  *
  */
 
+const USERNAME_MIN_LENGTH = 1;
+
 class UsernameUndefinedError extends Error {
   constructor() {
     super();
@@ -58,8 +60,28 @@ function expectString(username) {
   return username;
 }
 
+class UsernameMinimumLengthError extends Error {
+  constructor(username) {
+    super();
+
+    this.name = 'UsernameMinimumLengthError';
+    this.message = 'The specified username is too short';
+    this.status = 400;
+    this.username = username;
+  }
+}
+
+function expectMinimumLength(username) {
+  if (username.length < USERNAME_MIN_LENGTH) {
+    throw new UsernameMinimumLengthError(username);
+  }
+
+  return username;
+}
+
 module.exports = function (username) {
   return Promise.resolve(username)
     .then(expectDefined)
-    .then(expectString);
+    .then(expectString)
+    .then(expectMinimumLength);
 };

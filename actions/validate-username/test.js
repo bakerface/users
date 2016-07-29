@@ -46,4 +46,13 @@ describe('validating a username', function () {
       username: 0
     });
   });
+
+  it('should reject usernames that are too short', function () {
+    return validateUsername('').should.be.rejectedWith({
+      name: 'UsernameMinimumLengthError',
+      message: 'The specified username is too short',
+      status: 400,
+      username: ''
+    });
+  });
 });
