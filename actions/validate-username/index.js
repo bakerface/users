@@ -23,6 +23,7 @@
 
 const USERNAME_MIN_LENGTH = 1;
 const USERNAME_MAX_LENGTH = 25;
+const REGEX_ALPHANUMERIC = /^[A-Za-z0-9]*$/;
 
 class UsernameUndefinedError extends Error {
   constructor() {
@@ -99,10 +100,30 @@ function expectMaximumLength(username) {
   return username;
 }
 
+class UsernameAlphanumericError extends Error {
+  constructor(username) {
+    super();
+
+    this.name = 'UsernameAlphanumericError';
+    this.message = 'The specified username is not alphanumeric';
+    this.status = 400;
+    this.username = username;
+  }
+}
+
+function expectAlphanumeric(username) {
+  if (!REGEX_ALPHANUMERIC.test(username)) {
+    throw new UsernameAlphanumericError(username);
+  }
+
+  return username;
+}
+
 module.exports = function (username) {
   return Promise.resolve(username)
     .then(expectDefined)
     .then(expectString)
     .then(expectMinimumLength)
-    .then(expectMaximumLength);
+    .then(expectMaximumLength)
+    .then(expectAlphanumeric);
 };

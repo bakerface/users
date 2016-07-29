@@ -66,4 +66,13 @@ describe('validating a username', function () {
       username: username
     });
   });
+
+  it('should reject usernames that are not alphanumeric', function () {
+    return validateUsername('john-doe').should.be.rejectedWith({
+      name: 'UsernameAlphanumericError',
+      message: 'The specified username is not alphanumeric',
+      status: 400,
+      username: 'john-doe'
+    });
+  });
 });
