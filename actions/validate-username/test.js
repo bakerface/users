@@ -21,5 +21,12 @@
  *
  */
 
-exports.getVersion = require('./get-version');
-exports.validateUsername = require('./validate-username');
+const assert = require('assert');
+const validateUsername = require('.');
+
+describe('validating a username', function () {
+  it('should return valid usernames', function () {
+    return validateUsername('jdoe')
+      .then(username => assert.equal(username, 'jdoe'));
+  });
+});

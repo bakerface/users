@@ -21,5 +21,6 @@
  *
  */
 
-exports.getVersion = require('./get-version');
-exports.validateUsername = require('./validate-username');
+module.exports = function (username) {
+  return Promise.resolve(username);
+};
