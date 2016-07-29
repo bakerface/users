@@ -21,6 +21,25 @@
  *
  */
 
+class UsernameUndefinedError extends Error {
+  constructor() {
+    super();
+
+    this.name = 'UsernameUndefinedError';
+    this.message = 'A username must be defined';
+    this.status = 400;
+  }
+}
+
+function expectDefined(username) {
+  if (typeof username === 'undefined') {
+    throw new UsernameUndefinedError();
+  }
+
+  return username;
+}
+
 module.exports = function (username) {
-  return Promise.resolve(username);
+  return Promise.resolve(username)
+    .then(expectDefined);
 };

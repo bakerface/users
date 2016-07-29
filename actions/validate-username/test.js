@@ -21,12 +21,20 @@
  *
  */
 
-const assert = require('assert');
+require('should');
+
 const validateUsername = require('.');
 
 describe('validating a username', function () {
   it('should return valid usernames', function () {
-    return validateUsername('jdoe')
-      .then(username => assert.equal(username, 'jdoe'));
+    return validateUsername('jdoe').should.be.fulfilledWith('jdoe');
+  });
+
+  it('should reject undefined usernames', function () {
+    return validateUsername().should.be.rejectedWith({
+      name: 'UsernameUndefinedError',
+      message: 'A username must be defined',
+      status: 400
+    });
   });
 });

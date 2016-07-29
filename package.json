@@ -54,5 +54,8 @@
     "istanbul": "^0.4.4",
     "mocha": "^2.5.3",
     "xo": "^0.16.0"
+  },
+  "dependencies": {
+    "should": "^10.0.0"
   }
 }
