@@ -21,13 +21,13 @@
  *
  */
 
-const assert = require('assert');
+require('should');
+
 const { version } = require('../../package.json');
 const getVersion = require('.');
 
 describe('reading the software version', function () {
   it('should match the npm package configuration', function () {
-    return getVersion()
-      .then(v => assert.equal(v, version));
+    return getVersion().should.be.fulfilledWith(version);
   });
 });
