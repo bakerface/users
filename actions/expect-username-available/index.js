@@ -21,6 +21,28 @@
  *
  */
 
-exports.getVersion = require('./get-version');
-exports.validateUsername = require('./validate-username');
-exports.expectUsernameAvailable = require('./expect-username-available');
+class UsernameReservedError extends Error {
+  constructor(username) {
+    super();
+
+    this.name = 'UsernameReservedError';
+    this.message = 'The specified username is reserved';
+    this.status = 400;
+    this.username = username;
+  }
+}
+
+function expectUnreserved(username) {
+  if (username === 'me') {
+    throw new UsernameReservedError(username);
+  }
+
+  return username;
+}
+
+module.exports = function () {
+  return function (username) {
+    return Promise.resolve(username)
+      .then(expectUnreserved);
+  };
+};

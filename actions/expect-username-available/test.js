@@ -21,6 +21,27 @@
  *
  */
 
-exports.getVersion = require('./get-version');
-exports.validateUsername = require('./validate-username');
-exports.expectUsernameAvailable = require('./expect-username-available');
+require('should');
+
+const expectUsernameAvailable = require('.');
+
+describe('expecting a username to be available', function () {
+  let expect;
+
+  beforeEach(function () {
+    expect = expectUsernameAvailable();
+  });
+
+  it('should return usernames that are available', function () {
+    return expect('jdoe').should.be.fulfilledWith('jdoe');
+  });
+
+  it('should reject usernames that are reserved', function () {
+    return expect('me').should.be.rejectedWith({
+      name: 'UsernameReservedError',
+      message: 'The specified username is reserved',
+      status: 400,
+      username: 'me'
+    });
+  });
+});
