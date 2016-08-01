@@ -21,3 +21,4 @@
  *
  */
 
+exports.ValidateUsername = require('./validate-username');
