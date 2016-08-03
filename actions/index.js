@@ -21,6 +21,6 @@
  *
  */
 
-exports.ValidateUsername = require('./validate-username');
 exports.ExpectUsernameAvailable = require('./expect-username-available');
 exports.ExpectUsernameRegistered = require('./expect-username-registered');
+exports.ExpectUsernameValid = require('./expect-username-valid');

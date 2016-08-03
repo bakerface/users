@@ -23,11 +23,11 @@
 
 require('should');
 
-const ValidateUsername = require('.');
+const ExpectUsernameValid = require('.');
 
-describe('ValidateUsername', function () {
+describe('ExpectUsernameValid', function () {
   beforeEach(function () {
-    this.validateUsername = new ValidateUsername();
+    this.validateUsername = new ExpectUsernameValid();
   });
 
   describe('when the username is undefined', function () {

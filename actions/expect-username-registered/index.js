@@ -21,7 +21,7 @@
  *
  */
 
-const ValidateUsername = require('../validate-username');
+const ExpectUsernameValid = require('../expect-username-valid');
 
 class UsernameNotFoundError extends Error {
   constructor(username) {
@@ -46,7 +46,7 @@ module.exports = class {
   }
 
   checkValidUsername() {
-    return new ValidateUsername()
+    return new ExpectUsernameValid()
       .withUsername(this.username)
       .perform();
   }
