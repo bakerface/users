@@ -21,6 +21,52 @@
  *
  */
 
-exports.ValidateUsername = require('./validate-username');
-exports.ExpectUsernameAvailable = require('./expect-username-available');
-exports.ExpectUsernameRegistered = require('./expect-username-registered');
+const ValidateUsername = require('../validate-username');
+
+class UsernameNotFoundError extends Error {
+  constructor(username) {
+    super();
+
+    this.name = 'UsernameNotFoundError';
+    this.message = 'The specified username could not be found';
+    this.username = username;
+    this.status = 404;
+  }
+}
+
+module.exports = class {
+  withUsernameJack(usernameJack) {
+    this.usernameJack = usernameJack;
+    return this;
+  }
+
+  withUsername(username) {
+    this.username = username;
+    return this;
+  }
+
+  checkValidUsername() {
+    return new ValidateUsername()
+      .withUsername(this.username)
+      .perform();
+  }
+
+  checkRegisteredId(id) {
+    if (id) {
+      return id;
+    }
+
+    throw new UsernameNotFoundError(this.username);
+  }
+
+  checkRegisteredUsername() {
+    return this.usernameJack.get(this.username)
+      .then(this.checkRegisteredId.bind(this));
+  }
+
+  perform() {
+    return Promise.resolve()
+      .then(this.checkValidUsername.bind(this))
+      .then(this.checkRegisteredUsername.bind(this));
+  }
+};
