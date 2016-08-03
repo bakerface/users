@@ -31,36 +31,45 @@ describe('ExpectUsernameAvailable', function () {
     this.usernameJack = new Hash();
 
     this.expectUsernameAvailable = new ExpectUsernameAvailable()
-      .withUsernameJack(this.usernameJack);
+      .withUsernameJack(this.usernameJack)
+      .withUsername('jdoe');
   });
 
-  it('should return usernames that are available', function () {
-    return this.expectUsernameAvailable
-      .withUsername('jdoe')
-      .perform()
-      .should.be.fulfilledWith('jdoe');
+  describe('when the username is undefined', function () {
+    beforeEach(function () {
+      this.expectUsernameAvailable.withUsername();
+    });
+
+    it('should throw a UsernameUndefinedError', function () {
+      return this.expectUsernameAvailable.perform()
+        .should.be.rejectedWith({
+          name: 'UsernameUndefinedError',
+          message: 'A username must be defined',
+          status: 400
+        });
+    });
   });
 
-  it('should reject usernames that are not valid', function () {
-    return this.expectUsernameAvailable
-      .perform()
-      .should.be.rejectedWith({
-        name: 'UsernameUndefinedError',
-        message: 'A username must be defined',
-        status: 400
-      });
+  describe('when the username is available', function () {
+    it('should return the username', function () {
+      return this.expectUsernameAvailable.perform()
+        .should.be.fulfilledWith('jdoe');
+    });
   });
 
-  it('should reject usernames that are unavailable', function () {
-    return this.usernameJack.set('jdoe', '1234')
-      .then(() => this.expectUsernameAvailable
-          .withUsername('jdoe')
-          .perform())
-      .should.be.rejectedWith({
-        name: 'UsernameConflictError',
-        message: 'The specified username is taken',
-        status: 409,
-        username: 'jdoe'
-      });
+  describe('when the username is registered', function () {
+    beforeEach(function () {
+      return this.usernameJack.set('jdoe', '1234');
+    });
+
+    it('should throw a UsernameConflictError', function () {
+      return this.expectUsernameAvailable.perform()
+        .should.be.rejectedWith({
+          name: 'UsernameConflictError',
+          message: 'The specified username is taken',
+          username: 'jdoe',
+          status: 409
+        });
+    });
   });
 });
