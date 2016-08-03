@@ -21,5 +21,52 @@
  *
  */
 
-exports.ValidateUsername = require('./validate-username');
-exports.ExpectUsernameAvailable = require('./expect-username-available');
+const ValidateUsername = require('../validate-username');
+
+class UsernameConflictError extends Error {
+  constructor(username) {
+    super();
+
+    this.name = 'UsernameConflictError';
+    this.message = 'The specified username is taken';
+    this.status = 409;
+    this.username = username;
+  }
+}
+
+module.exports = class {
+  withUsernameJack(usernameJack) {
+    this.usernameJack = usernameJack;
+    return this;
+  }
+
+  withUsername(username) {
+    this.username = username;
+    return this;
+  }
+
+  checkValidUsername() {
+    return new ValidateUsername()
+      .withUsername(this.username)
+      .perform();
+  }
+
+  checkAvailableId(id) {
+    if (id) {
+      throw new UsernameConflictError(this.username);
+    }
+
+    return this.username;
+  }
+
+  checkAvailableUsername() {
+    return this.usernameJack.get(this.username)
+      .then(this.checkAvailableId.bind(this));
+  }
+
+  perform() {
+    return Promise.resolve()
+      .then(this.checkValidUsername.bind(this))
+      .then(this.checkAvailableUsername.bind(this));
+  }
+};
