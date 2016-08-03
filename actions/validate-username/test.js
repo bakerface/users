@@ -30,68 +30,90 @@ describe('ValidateUsername', function () {
     this.validateUsername = new ValidateUsername();
   });
 
-  it('should return usernames that are valid', function () {
-    return this.validateUsername
-      .withUsername('jdoe')
-      .perform()
-      .should.be.fulfilledWith('jdoe');
+  describe('when the username is undefined', function () {
+    it('should throw a UsernameUndefinedError', function () {
+      return this.validateUsername.perform()
+        .should.be.rejectedWith({
+          name: 'UsernameUndefinedError',
+          message: 'A username must be defined',
+          status: 400
+        });
+    });
   });
 
-  it('should reject usernames that are undefined', function () {
-    return this.validateUsername
-      .perform()
-      .should.be.rejectedWith({
-        name: 'UsernameUndefinedError',
-        message: 'A username must be defined',
-        status: 400
-      });
+  describe('when the username is not a string', function () {
+    beforeEach(function () {
+      this.validateUsername.withUsername(0);
+    });
+
+    it('should throw a UsernameTypeError', function () {
+      return this.validateUsername.perform()
+        .should.be.rejectedWith({
+          name: 'UsernameTypeError',
+          message: 'The specified username is not a string',
+          username: 0,
+          status: 400
+        });
+    });
   });
 
-  it('should reject usernames that are not strings', function () {
-    return this.validateUsername
-      .withUsername(0)
-      .perform()
-      .should.be.rejectedWith({
-        name: 'UsernameTypeError',
-        message: 'The specified username is not a string',
-        status: 400,
-        username: 0
-      });
+  describe('when the username is too short', function () {
+    beforeEach(function () {
+      this.validateUsername.withUsername('');
+    });
+
+    it('should throw a UsernameMinimumLengthError', function () {
+      return this.validateUsername.perform()
+        .should.be.rejectedWith({
+          name: 'UsernameMinimumLengthError',
+          message: 'The specified username is too short',
+          username: '',
+          status: 400
+        });
+    });
   });
 
-  it('should reject usernames that are too short', function () {
-    return this.validateUsername
-      .withUsername('')
-      .perform()
-      .should.be.rejectedWith({
-        name: 'UsernameMinimumLengthError',
-        message: 'The specified username is too short',
-        status: 400,
-        username: ''
-      });
+  describe('when the username is too long', function () {
+    beforeEach(function () {
+      this.validateUsername
+        .withUsername('1234567890123456789012345678901234567890');
+    });
+
+    it('should throw a UsernameMaximumLengthError', function () {
+      return this.validateUsername.perform()
+        .should.be.rejectedWith({
+          name: 'UsernameMaximumLengthError',
+          message: 'The specified username is too long',
+          username: '1234567890123456789012345678901234567890',
+          status: 400
+        });
+    });
   });
 
-  it('should reject usernames that are too long', function () {
-    return this.validateUsername
-      .withUsername('1234567890123456789012345678901234567890')
-      .perform()
-      .should.be.rejectedWith({
-        name: 'UsernameMaximumLengthError',
-        message: 'The specified username is too long',
-        status: 400,
-        username: '1234567890123456789012345678901234567890'
-      });
+  describe('when the username is not alphanumeric', function () {
+    beforeEach(function () {
+      this.validateUsername.withUsername('john-doe');
+    });
+
+    it('should throw a UsernameAlphanumericError', function () {
+      return this.validateUsername.perform()
+        .should.be.rejectedWith({
+          name: 'UsernameAlphanumericError',
+          message: 'The specified username is not alphanumeric',
+          username: 'john-doe',
+          status: 400
+        });
+    });
   });
 
-  it('should reject usernames that are not alphanumeric', function () {
-    return this.validateUsername
-      .withUsername('john-doe')
-      .perform()
-      .should.be.rejectedWith({
-        name: 'UsernameAlphanumericError',
-        message: 'The specified username is not alphanumeric',
-        status: 400,
-        username: 'john-doe'
-      });
+  describe('when the username is valid', function () {
+    beforeEach(function () {
+      this.validateUsername.withUsername('jdoe');
+    });
+
+    it('should return the username', function () {
+      return this.validateUsername.perform()
+        .should.be.fulfilledWith('jdoe');
+    });
   });
 });
